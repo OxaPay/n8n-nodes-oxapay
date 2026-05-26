@@ -1,0 +1,71 @@
+{
+  "name": "n8n-nodes-oxapay",
+  "version": "1.0.7",
+  "description": "Official OxaPay node for n8n, supporting crypto payments, payouts, swaps, account utilities, and webhooks.",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "oxapay",
+    "crypto",
+    "payment",
+    "cryptocurrency",
+    "webhook",
+    "payout",
+    "swap",
+    "automation"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/OxaPay/n8n-nodes-oxapay",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OxaPay/n8n-nodes-oxapay.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OxaPay/n8n-nodes-oxapay/issues"
+  },
+  "author": {
+    "name": "OxaPay",
+    "email": "contact@oxapay.com",
+    "url": "https://oxapay.com"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "examples"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.json && copyfiles -u 0 \"nodes/**/*.svg\" \"nodes/**/*.node.json\" dist",
+    "watch": "tsc -w -p tsconfig.json",
+    "test": "npm run lint && npm run build && npm pack --dry-run",
+    "dev": "npm run watch",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "^0.23.0",
+    "@types/node": "^20.11.30",
+    "copyfiles": "^2.4.1",
+    "n8n-workflow": "^2.7.0",
+    "rimraf": "^6.1.2",
+    "typescript": "^5.5.0"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/OxaPayMerchantApi.credentials.js",
+      "dist/credentials/OxaPayPayoutApi.credentials.js",
+      "dist/credentials/OxaPayGeneralApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/OxaPay/OxaPay.node.js",
+      "dist/nodes/OxaPay/OxaPayTrigger.node.js"
+    ]
+  }
+}

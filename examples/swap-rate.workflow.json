@@ -1,0 +1,159 @@
+{
+  "name": "swap-rate.workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a3a455b9-05ee-41cc-9bf3-0c6a876b6ccb",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1bff9571-ac71-43ea-aee8-2279a4ba1f81",
+              "name": "from_currency",
+              "value": "BTC",
+              "type": "string"
+            },
+            {
+              "id": "f8b0de86-53d1-4a8c-bbc9-9cf691b98d02",
+              "name": "to_currency",
+              "value": "USDT",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "7820dea8-3ce4-48c1-8183-fe80b7772dd2",
+      "name": "Set Swap Pair"
+    },
+    {
+      "parameters": {
+        "resource": "swap",
+        "operation": "getSwapRate",
+        "gs_from_currency": "={{ $json.from_currency }}",
+        "gs_to_currency": "={{ $json.to_currency }}"
+      },
+      "type": "n8n-nodes-oxapay.oxapay",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5a2c75e4-d680-4821-934c-3a11d54bafec",
+      "name": "Get Swap Rate",
+      "credentials": {
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d8a3152e-ba8e-4d3a-b100-0f65693949e4",
+              "name": "from_currency",
+              "value": "={{ $('Set Swap Pair').item.json.from_currency }}",
+              "type": "string"
+            },
+            {
+              "id": "0be083e5-0d58-476d-8190-78d2133367b3",
+              "name": "to_currency",
+              "value": "={{ $('Set Swap Pair').item.json.to_currency }}",
+              "type": "string"
+            },
+            {
+              "id": "8f7fdeae-7452-46d0-afac-781cd2eeaf03",
+              "name": "rate",
+              "value": "={{ $json.data.rate }}",
+              "type": "number"
+            },
+            {
+              "id": "765da2d9-86c8-4088-8310-232908db9860",
+              "name": "next_step",
+              "value": "Use this rate before running swap or treasury automation logic.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "c66be314-fb90-4456-a01e-c421891ec23a",
+      "name": "Prepare Swap Rate Response"
+    },
+    {
+      "parameters": {
+        "content": "OxaPay Swap Rate Example\n\nThis workflow retrieves the current OxaPay swap rate for a supported currency pair.\n\nUse this example before building swap, treasury, or balance management automation logic.\n\nBefore using this workflow:\n- Replace the sample from_currency and to_currency values\n- Make sure the currency pair is supported by OxaPay\n- Configure your OxaPay General API Key credential",
+        "height": 272,
+        "width": 448
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -320
+      ],
+      "id": "ebfc5c64-31e9-4f8f-b64e-82441d1ca60a",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Swap Pair",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Swap Pair": {
+      "main": [
+        [
+          {
+            "node": "Get Swap Rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Swap Rate": {
+      "main": [
+        [
+          {
+            "node": "Prepare Swap Rate Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

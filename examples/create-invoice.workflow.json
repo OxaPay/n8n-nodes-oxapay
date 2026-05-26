@@ -1,0 +1,179 @@
+{
+  "name": "create-invoice.workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        -304
+      ],
+      "id": "6eddb8ed-279a-4272-806b-85799ee847d7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.amount }}",
+        "currency": "={{ $json.currency }}",
+        "order_id": "={{ $json.order_id }}",
+        "callback_url": "={{ $json.callback_url }}",
+        "return_url": "={{ $json.return_url }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-oxapay.oxapay",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -304
+      ],
+      "id": "353c569c-8e18-42c8-83eb-656eaf515cd5",
+      "name": "Generate an Invoice Link",
+      "credentials": {
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "faa3d163-bd2e-4a9b-8a93-2fb9271b4585",
+              "name": "order_id",
+              "value": "ORDER-1001",
+              "type": "string"
+            },
+            {
+              "id": "2e7e0718-9f7e-4a5a-8f71-05e06ec65108",
+              "name": "amount",
+              "value": 25,
+              "type": "number"
+            },
+            {
+              "id": "106a982c-dcfb-4461-889a-61855103b42c",
+              "name": "currency",
+              "value": "USD",
+              "type": "string"
+            },
+            {
+              "id": "af26a38e-be7d-49e4-aec3-fa18f4ac53dd",
+              "name": "callback_url",
+              "value": "https://example.com/webhook/oxapay",
+              "type": "string"
+            },
+            {
+              "id": "2a5068e9-cc30-4193-b75b-ccc5cc8c9f46",
+              "name": "return_url",
+              "value": "https://example.com/payment-success",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -512,
+        -304
+      ],
+      "id": "eede9088-23a7-49d5-b802-00278167baee",
+      "name": "Set Order Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "66acecfe-4eaf-4ed8-b452-be50d67da9ad",
+              "name": "order_id",
+              "value": "={{ $('Set Order Data').item.json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "740677c3-9b84-47c8-afd8-817b60b0ec7f",
+              "name": "track_id",
+              "value": "={{ $json.data.track_id }}",
+              "type": "number"
+            },
+            {
+              "id": "5e596223-38df-4b51-8472-71bb2c3dcdb9",
+              "name": "payment_link",
+              "value": "={{ $json.data.payment_url }}",
+              "type": "string"
+            },
+            {
+              "id": "1788caac-90b2-44a0-9f21-b65543aba692",
+              "name": "next_step",
+              "value": "Send the invoice URL to the customer by email, chat, or your ecommerce platform.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        -304
+      ],
+      "id": "105e9757-886c-40d3-82bf-2b28de5580bb",
+      "name": "Prepare Invoice Response"
+    },
+    {
+      "parameters": {
+        "content": "Create OxaPay Invoice Example\n\nThis workflow creates an OxaPay payment invoice from sample order data.\n\nUse this example when you want to generate a crypto payment invoice and send the payment link to a customer.\n\nBefore using this workflow in production:\n- Replace the sample order data\n- Replace the callback URL\n- Replace the return URL\n- Configure your OxaPay Merchant API Key credential",
+        "height": 288,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -640
+      ],
+      "id": "e09244e8-9f22-4a41-8b37-62e78f3b1fa3",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set Order Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Order Data": {
+      "main": [
+        [
+          {
+            "node": "Generate an Invoice Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an Invoice Link": {
+      "main": [
+        [
+          {
+            "node": "Prepare Invoice Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

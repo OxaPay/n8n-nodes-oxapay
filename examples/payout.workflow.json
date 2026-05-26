@@ -1,0 +1,166 @@
+{
+  "name": "payout.workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "73ce2881-bdc7-4d21-ab1e-0f978e972dad",
+              "name": "address",
+              "value": "REPLACE_WITH_RECIPIENT_WALLET_ADDRESS",
+              "type": "string"
+            },
+            {
+              "id": "aae8ec20-d731-4843-bdc9-ca269b033ba7",
+              "name": "currency",
+              "value": "USDT",
+              "type": "string"
+            },
+            {
+              "id": "3d0ea26b-8d62-4713-9a19-451ff757190e",
+              "name": "amount",
+              "value": 10,
+              "type": "number"
+            },
+            {
+              "id": "c52093f0-1dd7-4ff5-b592-d438960e989d",
+              "name": "network",
+              "value": "TRC20",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f60e1a7f-823f-49a0-bfd8-bb8451452fb2",
+      "name": "Set Payout Data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d2b30986-f5b7-49c7-80e3-591d9eb48485",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "payout",
+        "p_address": "={{ $json.address }}",
+        "p_currency": "={{ $json.currency }}",
+        "p_amount": "={{ $json.amount }}",
+        "p_network": "={{ $json.network }}"
+      },
+      "type": "n8n-nodes-oxapay.oxapay",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "c55c7760-3ee8-4c6b-8cae-36a3aba7dad7",
+      "name": "Create OxaPay Payout",
+      "credentials": {
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "530f20a5-7e12-4073-a631-fd033327d92f",
+              "name": "track_id",
+              "value": "={{$json.data.track_id}}",
+              "type": "string"
+            },
+            {
+              "id": "7ba78b25-0776-4261-afec-ca62c97a9eda",
+              "name": "status",
+              "value": "={{$json.data.status}}",
+              "type": "string"
+            },
+            {
+              "id": "0c832889-bb19-4fa7-a5fa-96d0ed2bf2fc",
+              "name": "message",
+              "value": "Store the payout response in your internal system or database.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "b1372885-4dcf-4853-b3ef-e22c44d44477",
+      "name": "Prepare Payout Response"
+    },
+    {
+      "parameters": {
+        "content": "Create OxaPay Payout Example\n\nThis workflow creates an OxaPay payout request from sample recipient data.\n\nUse this example when you want to automate crypto payouts from n8n.\n\nImportant:\n- Payouts may move real funds when using live credentials\n- Replace the sample wallet address before running\n- Verify the currency, network, amount, and destination address carefully\n- Configure your OxaPay Payout API Key credential",
+        "height": 288,
+        "width": 512
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -336
+      ],
+      "id": "fa8c7cdc-2dde-4b48-b9f0-a6d05255da22",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Payout Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Payout Data": {
+      "main": [
+        [
+          {
+            "node": "Create OxaPay Payout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create OxaPay Payout": {
+      "main": [
+        [
+          {
+            "node": "Prepare Payout Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

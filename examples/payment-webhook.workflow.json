@@ -1,0 +1,197 @@
+{
+  "name": "payment-webhook.workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bb363f3-8266-4981-ac18-6692b08d39a8",
+              "name": "event",
+              "value": "payment_paid",
+              "type": "string"
+            },
+            {
+              "id": "5de16e6b-97ba-4461-b9d9-a0b9ff5fc45d",
+              "name": "order_id",
+              "value": "={{ $('OxaPay Payment Webhook').item.json.body.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7506705a-c04a-44e2-b4df-49f278bae8c3",
+              "name": "track_id",
+              "value": "={{ $('OxaPay Payment Webhook').item.json.body.track_id }}",
+              "type": "string"
+            },
+            {
+              "id": "1c3dce6a-8adf-47b2-82d7-0f66d2f6d0d0",
+              "name": "status",
+              "value": "={{ $('OxaPay Payment Webhook').item.json.body.status }}",
+              "type": "string"
+            },
+            {
+              "id": "ab5d2b84-ef76-4afd-bdd9-be2ba1bd1310",
+              "name": "message",
+              "value": "Payment completed. Update the order status in your ecommerce platform or database.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "ed2725b4-1768-4243-a36e-0c5d666ac84d",
+      "name": "Mark Order As Paid"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bb363f3-8266-4981-ac18-6692b08d39a8",
+              "name": "event",
+              "value": "payment_not_completed",
+              "type": "string"
+            },
+            {
+              "id": "5de16e6b-97ba-4461-b9d9-a0b9ff5fc45d",
+              "name": "order_id",
+              "value": "={{ $('OxaPay Payment Webhook').item.json.body.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7506705a-c04a-44e2-b4df-49f278bae8c3",
+              "name": "track_id",
+              "value": "={{ $('OxaPay Payment Webhook').item.json.body.track_id }}",
+              "type": "string"
+            },
+            {
+              "id": "1c3dce6a-8adf-47b2-82d7-0f66d2f6d0d0",
+              "name": "status",
+              "value": "={{ $('OxaPay Payment Webhook').item.json.body.status }}",
+              "type": "string"
+            },
+            {
+              "id": "ab5d2b84-ef76-4afd-bdd9-be2ba1bd1310",
+              "name": "message",
+              "value": "Payment was received but is not completed yet.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        96
+      ],
+      "id": "a043fdf0-5dd3-4005-9eba-c49058ff4ebe",
+      "name": "Payment Not Completed"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "eb19d98f-e451-4822-88d6-2da9d721a949",
+              "leftValue": "={{ $json.body.status }}",
+              "rightValue": "Paid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a0d29362-43ad-4e0e-9f50-381b72f2c77f",
+      "name": "Is Payment Paid?"
+    },
+    {
+      "parameters": {
+        "webhookType": "payment"
+      },
+      "type": "n8n-nodes-oxapay.oxapayTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "053b6d6b-c365-45e5-b080-8487c68517fd",
+      "name": "OxaPay Payment Webhook",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "content": "OxaPay Payment Webhook Example\n\nThis workflow receives OxaPay payment webhook events and checks the payment status.\n\nUse this example to update an order, database, CRM, or internal system when a payment is completed.\n\nBefore activating this workflow:\n- Configure your OxaPay Merchant API Key credential\n- Copy the production webhook URL from this trigger\n- Add the webhook URL to your OxaPay payment callback settings",
+        "height": 272,
+        "width": 512
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -384
+      ],
+      "id": "7c867c7d-52f6-46f8-be96-197f2d7e566c",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Is Payment Paid?": {
+      "main": [
+        [
+          {
+            "node": "Mark Order As Paid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Payment Not Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OxaPay Payment Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Payment Paid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

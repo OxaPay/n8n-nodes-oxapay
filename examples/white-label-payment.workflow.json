@@ -1,0 +1,187 @@
+{
+  "name": "white-label-payment.workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7652ab9d-e25f-46d0-bc8f-f2047b3e63e7",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f6860a2-deac-47e0-beec-f0002552a304",
+              "name": "order_id",
+              "value": "ORDER-WL-1001",
+              "type": "string"
+            },
+            {
+              "id": "0a6b340a-e6bd-4ec8-9a00-bced0de3afe4",
+              "name": "amount",
+              "value": 25,
+              "type": "number"
+            },
+            {
+              "id": "ebb652c4-5952-417f-9895-e5c42f88339d",
+              "name": "currency",
+              "value": "USD",
+              "type": "string"
+            },
+            {
+              "id": "114e3a75-01e8-4934-b434-58b09aca3625",
+              "name": "pay_currency",
+              "value": "USDT",
+              "type": "string"
+            },
+            {
+              "id": "6495b88f-917a-41a9-9e3d-b0390bacc73c",
+              "name": "network",
+              "value": "TRC20",
+              "type": "string"
+            },
+            {
+              "id": "594095e5-7fdc-4729-a55a-32b6f671cd1a",
+              "name": "callback_url",
+              "value": "https://example.com/oxapay/white-label-webhook",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "3825c515-f3c5-4cec-8870-6fddf68421b1",
+      "name": "Set White Label Payment Data"
+    },
+    {
+      "parameters": {
+        "operation": "generateWhiteLabel",
+        "wl_pay_currency": "={{ $json.pay_currency }}",
+        "wl_amount": "={{ $json.amount }}",
+        "wl_currency": "={{ $json.currency }}",
+        "wl_network": "={{ $json.network }}",
+        "wl_callback_url": "={{ $json.callback_url }}",
+        "wl_order_id": "={{ $json.order_id }}",
+        "wl_additionalFields": {}
+      },
+      "type": "n8n-nodes-oxapay.oxapay",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "48b0c0fd-e7b7-4f90-bc85-546f86c9eecf",
+      "name": "Generate White Label Payment",
+      "credentials": {
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02c0a79f-1b73-4182-9b8d-89bb9be53c2d",
+              "name": "order_id",
+              "value": "={{ $('Set White Label Payment Data').item.json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4656fd2f-d39e-4b78-a14e-6a1f7e1c945a",
+              "name": "track_id",
+              "value": "={{ $json.data.track_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c71657b9-ab88-499a-8fcb-666d714ccb27",
+              "name": "wallet_address",
+              "value": "={{ $json.data.address }}",
+              "type": "string"
+            },
+            {
+              "id": "e711ba62-9298-477d-b145-f6dc68c8b3f0",
+              "name": "next_step",
+              "value": "Use the returned payment details in your own checkout UI.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "9dfe7660-38e8-4807-a2bd-576658fc37f0",
+      "name": "Prepare White Label Response"
+    },
+    {
+      "parameters": {
+        "content": "OxaPay White Label Payment Example\n\nThis workflow generates OxaPay white-label payment details from sample order data.\n\nUse this example when you want to build a custom payment experience in your own app instead of redirecting customers to a hosted invoice page.\n\nBefore using this workflow in production:\n- Replace the sample order data\n- Replace the callback URL\n- Choose the correct pay currency and network\n- Configure your OxaPay Merchant API Key credential",
+        "height": 304,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -352
+      ],
+      "id": "dc474f24-ce45-4019-b4ef-8b6a1c94e5b8",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set White Label Payment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set White Label Payment Data": {
+      "main": [
+        [
+          {
+            "node": "Generate White Label Payment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate White Label Payment": {
+      "main": [
+        [
+          {
+            "node": "Prepare White Label Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
